@@ -9,16 +9,23 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/users")
-class Controller(
-    val service: Service
-) {
+class Controller {
 
     @GetMapping
     fun getAll(): Flux<User> =
-        service.getAll()
+        Flux.fromIterable(users)
 
     @GetMapping("/{id}")
     fun get(@PathVariable("id") id: String): Mono<User> =
-        service.getUser(id)
+        Mono.justOrEmpty(users.findLast { id == it.id })
 
+
+    val users = listOf(
+        User(id = "user1@gmail.com"),
+        User(id = "user2@gmail.com")
+    )
+
+
+    class User(val id: String)
 }
+
